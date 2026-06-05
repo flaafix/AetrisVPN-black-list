@@ -2,8 +2,11 @@ name: Mirror AetrisVPN Configs
 
 on:
   schedule:
-    - cron: '15 * * * *'  # Запуск каждый час (чтобы избежать блокировок)
-  workflow_dispatch:     # Кнопка для ручного перезапуска
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   mirror:
@@ -14,12 +17,19 @@ jobs:
 
       - name: Download configs from Google Drive
         run: |
-          # Используем прямой экспорт, который обходит любые HTML-заглушки
           curl -L "https://docs.google.com/uc?export=download&id=1jYJh5ltgEJ9RiAWuSaG1YrxdCS_2J3M9" -o configs.txt
 
       - name: Commit and push if changed
         run: |
           git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@://github.com"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add configs.txt
-          (git diff --quiet && git diff --staged --quiet) || (git commit -m "Автообновление подписки" && git pull --rebase origin main && git push origin main)
+          
+          if git diff --staged --quiet; then
+            echo "Изменений в конфигах нет. Пропускаем коммит."
+          else
+            git commit -m "Автообновление подписки"
+            git pull --rebase origin main
+            git push origin main
+          fi
+          
