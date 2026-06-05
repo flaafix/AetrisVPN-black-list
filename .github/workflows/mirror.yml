@@ -1,1 +1,32 @@
+name: Mirror AetrisVPN Configs
 
+on:
+  schedule:
+    - cron: '*/30 * * * *'        # Каждые 30 минут
+  workflow_dispatch:            # Кнопка для ручного перезапуска
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download configs from Google Drive
+        run: |
+          # Используем прямой uc-экспорт, который обходит любые HTML-заглушки и "OK"
+          curl -L "https://docs.google.com/uc?export=download&id=1jYJh5ltgEJ9RiAWuSaG1YrxdCS_2J3M9" -o configs.txt
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "CatlerBot"
+          git config user.email "catler@gitverse.ru"
+          
+          git add configs.txt
+          
+          if [ -n "$(git status --porcelain)" ]; then
+            git commit -m "⚡️ Автообновление подписки: $(date +'%Y-%m-%d %H:%M:%S')"
+            git push origin master
+          else
+            echo "Конфиги не изменились."
+          fi
