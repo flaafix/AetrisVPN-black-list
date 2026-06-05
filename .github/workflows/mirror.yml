@@ -2,7 +2,7 @@ name: Mirror AetrisVPN Configs
 
 on:
   schedule:
-    - cron: '0 * * * *'
+    - cron: '0 * * * *' # Каждый час
   workflow_dispatch:
 
 permissions:
@@ -26,10 +26,17 @@ jobs:
           git add configs.txt
           
           if git diff --staged --quiet; then
-            echo "Изменений в конфигах нет. Пропускаем коммит."
+            echo "Изменений нет."
           else
             git commit -m "Автообновление подписки"
             git pull --rebase origin main
             git push origin main
           fi
           
+      # Этот шаг заставляет GitHub видеть репозиторий как «активный»
+      - name: Keepalive
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit --allow-empty -m "Поддержание активности воркфлоу"
+          git push origin main
