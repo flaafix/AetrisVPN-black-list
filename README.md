@@ -1,0 +1,2 @@
+# AetrisVPN-black-list
+AetrisVPN
