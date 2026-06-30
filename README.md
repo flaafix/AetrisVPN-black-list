@@ -1,6 +1,6 @@
 ---
 
-🌐 **Наш сайт:** [Перейти на сайт](http://f1275977.xsph.ru)
+🌐 **Наш сайт:** [Перейти на сайт](https://flaafix.github.io/AetrisVPN-MiniApp/)
 
 ---
 
